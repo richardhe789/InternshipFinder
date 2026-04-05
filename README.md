@@ -26,12 +26,13 @@ cd internship-dashboard
 
 2. Install Python dependencies:
 ```bash
+cd backend
 pip install -r requirements.txt
 ```
 
 3. Install Playwright browser dependencies:
 ```bash
-playwright install chromium
+python -m playwright install chromium
 ```
 
 ## Usage (FastAPI + Next.js)
@@ -41,7 +42,7 @@ playwright install chromium
 cd backend
 pip install -r requirements.txt
 python -m playwright install chromium
-uvicorn main:app --reload --port 8000
+python -m uvicorn main:app --reload --port 8000
 ```
 
 ### Frontend (Next.js)
@@ -80,8 +81,8 @@ To add more scraping sources:
 
 ### Vercel API (lightweight)
 This repo includes a Vercel-compatible API entrypoint in `api/main.py` for simple deployments.
-The `vercel.json` uses a versioned runtime (`@vercel/python@4.6.0`) to satisfy Vercel’s runtime validation.
 `python-dotenv` is included to avoid missing dotenv binary errors during Vercel builds.
+The root `vercel.json` declares explicit builds for the Next.js app and the Python function.
 Note: Vercel serverless functions have limited support for Playwright. For reliable scraping, host the backend on Render/Fly.
 
 ## Troubleshooting
