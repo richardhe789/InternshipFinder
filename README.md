@@ -45,6 +45,11 @@ python -m playwright install chromium
 python -m uvicorn main:app --reload --port 8000
 ```
 
+If you run uvicorn from the repo root instead, use:
+```bash
+python -m uvicorn backend.main:app --reload --port 8000
+```
+
 ### Frontend (Next.js)
 ```bash
 cd nextjs-app
@@ -57,6 +62,7 @@ Open the dashboard at http://localhost:3000 (frontend) and ensure the API is run
 ## How It Works
 
 - The backend scrapes internship data from SimplifyJobs and company ATS APIs (Greenhouse/Lever).
+- SimplifyJobs uses the official Typesense API endpoint (js-ha.simplify.jobs) for reliability.
 - Data is stored in a local SQLite database (`internships.db`).
 - The frontend queries the backend API to render listings and trigger scrapes.
 - Duplicate listings are prevented by checking unique URLs.

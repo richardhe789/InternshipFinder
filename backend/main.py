@@ -4,8 +4,12 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.database import fetch_from_db, init_db, save_to_db
-from backend.scraper import scrape_all_sources
+try:
+    from backend.database import fetch_from_db, init_db, save_to_db
+    from backend.scraper import scrape_all_sources
+except ModuleNotFoundError:
+    from database import fetch_from_db, init_db, save_to_db
+    from scraper import scrape_all_sources
 
 
 logger = logging.getLogger(__name__)

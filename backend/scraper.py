@@ -1,15 +1,18 @@
 import logging
+import time
 from datetime import datetime
 
 import requests
-from bs4 import BeautifulSoup
-from playwright.async_api import async_playwright
+from requests_ratelimiter import LimiterSession
 
 
 logger = logging.getLogger(__name__)
 
 
-SIMPLIFYJOBS_URL = "https://github.com/SimplifyJobs/Summer2026-Internships"
+SIMPLIFY_API_URL = "https://js-ha.simplify.jobs/multi_search"
+SIMPLIFY_API_KEY = "sUjQlkfBFnglUFcsFsZVcE7xhI8lJ1RG"
+
+session = LimiterSession(per_second=1)
 
 
 def normalize_location(location_text: str) -> str:
@@ -31,93 +34,91 @@ def score_from_source(source: str) -> float:
 
 async def scrape_simplifyjobs_internships():
     internships = []
-    try:
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            page = await browser.new_page()
-            await page.goto(SIMPLIFYJOBS_URL, timeout=30000)
-            await page.wait_for_selector("article.Box-row", timeout=10000)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "text/plain",
+        "Origin": "https://simplify.jobs",
+        "Referer": "https://simplify.jobs/",
+    }
 
-            content = await page.content()
-            soup = BeautifulSoup(content, "html.parser")
-            entries = soup.find_all("article", class_="Box-row")
+    page = 1
+    per_page = 25
+    cutoff_unix_time = int(time.time()) - (21 * 24 * 60 * 60)
 
-            for entry in entries:
-                try:
-                    company_elem = entry.find("h1", class_="h3")
-                    if not company_elem:
-                        continue
-                    company = company_elem.get_text(strip=True)
+    while True:
+        payload = {
+            "searches": [
+                {
+                    "collection": "jobs",
+                    "facet_by": "countries,degrees,experience_level,functions,locations",
+                    "filter_by": "experience_level:=[`Internship`] && countries:=[`United States`]",
+                    "highlight_full_fields": "title,company_name,functions,locations",
+                    "max_facet_values": 50,
+                    "page": page,
+                    "per_page": per_page,
+                    "q": "Software Engineer",
+                    "query_by": "title,company_name,functions,locations",
+                    "sort_by": "_text_match:desc,posting_id:desc",
+                }
+            ]
+        }
 
-                    body_elem = entry.find("div", class_="Box-body")
-                    if not body_elem:
-                        continue
+        try:
+            response = session.post(
+                SIMPLIFY_API_URL,
+                headers=headers,
+                params={"x-typesense-api-key": SIMPLIFY_API_KEY},
+                json=payload,
+                timeout=30,
+            )
+            response.raise_for_status()
+            data = response.json()
+        except requests.RequestException as exc:
+            logger.error(f"SimplifyJobs API error: {exc}")
+            break
 
-                    role = ""
-                    location = ""
-                    url = ""
+        result = data["results"][0]
+        hits = result.get("hits", [])
+        total_found = result.get("found", 0)
 
-                    text_parts = body_elem.get_text(separator="|", strip=True).split("|")
-                    for part in text_parts:
-                        part_lower = part.lower()
-                        if "role:" in part_lower or "position:" in part_lower:
-                            role = part.replace("Role:", "").replace("Position:", "").strip()
-                        elif "location:" in part_lower:
-                            location = part.replace("Location:", "").strip()
-                        elif "http" in part_lower:
-                            link_elem = entry.find("a", href=True)
-                            if link_elem:
-                                href = link_elem["href"]
-                                if href.startswith("http"):
-                                    url = href
-                                elif href.startswith("/"):
-                                    url = f"https://github.com{href}"
-                                else:
-                                    url = f"{SIMPLIFYJOBS_URL}/{href}"
+        if not hits:
+            break
 
-                    if not role:
-                        text_content = body_elem.get_text().lower()
-                        if "software" in text_content or "engineer" in text_content:
-                            role = "Software Engineer"
-                        elif "ml" in text_content or "machine learning" in text_content:
-                            role = "Machine Learning Engineer"
-                        elif "ai" in text_content or "artificial intelligence" in text_content:
-                            role = "AI Engineer"
-                        else:
-                            role = "Internship Position"
+        stale_count = 0
+        for hit in hits:
+            doc = hit.get("document", {})
+            updated_date = doc.get("updated_date")
+            if not isinstance(updated_date, int):
+                continue
+            if updated_date < cutoff_unix_time:
+                stale_count += 1
+                continue
 
-                    if not location:
-                        location = "Remote/Various"
+            title = doc.get("title", "Internship Position")
+            company = doc.get("company_name", "Unknown Company")
+            job_id = doc.get("id", "unknown-id")
+            job_title = title.replace(" ", "-").lower()
+            simplify_url = f"https://simplify.jobs/p/{job_id}/{job_title}"
+            locations = doc.get("locations") or ["Remote/Various"]
 
-                    if not url:
-                        link_elem = entry.find("a", href=True)
-                        if link_elem:
-                            href = link_elem["href"]
-                            if href.startswith("http"):
-                                url = href
-                            elif href.startswith("/"):
-                                url = f"https://github.com{href}"
-                            else:
-                                url = f"{SIMPLIFYJOBS_URL}/{href}"
+            internships.append(
+                {
+                    "company": company,
+                    "role": title,
+                    "location": locations[0],
+                    "url": simplify_url,
+                    "date_posted": datetime.now().strftime("%Y-%m-%d"),
+                    "match_score": score_from_source("SIMPLIFYJOBS"),
+                }
+            )
 
-                    if company and role and url:
-                        internships.append(
-                            {
-                                "company": company,
-                                "role": role,
-                                "location": location,
-                                "url": url,
-                                "date_posted": datetime.now().strftime("%Y-%m-%d"),
-                                "match_score": score_from_source("SIMPLIFYJOBS"),
-                            }
-                        )
-                except Exception as exc:
-                    logger.warning(f"Error processing entry: {exc}")
-                    continue
+        if stale_count >= len(hits) // 2:
+            break
+        if page * per_page >= total_found:
+            break
 
-            await browser.close()
-    except Exception as exc:
-        logger.error(f"Error during SimplifyJobs scraping: {exc}")
+        page += 1
 
     return internships
 
