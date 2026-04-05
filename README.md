@@ -76,7 +76,11 @@ To add more scraping sources:
 ## Hosting Notes
 
 - **Frontend**: Deploy `nextjs-app` to Vercel (set `NEXT_PUBLIC_API_BASE_URL` to your backend URL).
-- **Backend**: Deploy FastAPI on Render/Fly.io/Railway (ensure Playwright browsers are installed).
+- **Backend**: Deploy FastAPI on Render/Fly.io/Railway for full Playwright support.
+
+### Vercel API (lightweight)
+This repo also includes a Vercel-compatible API entrypoint in `api/main.py` for simple deployments.
+Note: Vercel serverless functions have limited support for Playwright. For reliable scraping, host the backend on Render/Fly.
 
 ## Troubleshooting
 
