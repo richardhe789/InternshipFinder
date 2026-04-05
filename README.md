@@ -81,6 +81,7 @@ To add more scraping sources:
 ### Vercel API (lightweight)
 This repo includes a Vercel-compatible API entrypoint in `api/main.py` for simple deployments.
 The `vercel.json` uses a versioned runtime (`@vercel/python@4.6.0`) to satisfy Vercel’s runtime validation.
+`python-dotenv` is included to avoid missing dotenv binary errors during Vercel builds.
 Note: Vercel serverless functions have limited support for Playwright. For reliable scraping, host the backend on Render/Fly.
 
 ## Troubleshooting
