@@ -81,6 +81,12 @@ SimplifyJobs is fetched via the GitHub API. If you hit rate limits, set `GITHUB_
 - **Frontend**: Deploy `nextjs-app` to Vercel (set `NEXT_PUBLIC_API_BASE_URL` to your backend URL).
 - **Backend**: Deploy FastAPI on Render/Fly.io/Railway for full Playwright support.
 
+### Remote deployment checklist (Vercel)
+- Use the same-origin API routes (`/api/jobs`, `/api/scrape`) — the frontend is already configured this way.
+- Add `GITHUB_TOKEN` as a Vercel Environment Variable if you need higher GitHub API rate limits.
+- SQLite writes on Vercel are stored in `/tmp` (ephemeral). For persistence, switch to a hosted database.
+- Verify the function is live by visiting `/api/health` on your Vercel domain.
+
 ### Vercel API (lightweight)
 This repo includes a Vercel-compatible API entrypoint in `api/index.py` for simple deployments.
 `python-dotenv` is included to avoid missing dotenv binary errors during Vercel builds.

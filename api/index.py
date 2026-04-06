@@ -20,6 +20,11 @@ except ModuleNotFoundError:
 if backend_app is not None:
     app = backend_app
 
+
+@app.get("/api/health")
+def health_check() -> dict:
+    return {"status": "ok"}
+
 handler = app
 
 __all__ = ["app", "handler"]
