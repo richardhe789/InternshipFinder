@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Job = {
   id?: number;
@@ -21,6 +21,7 @@ export default function Home() {
   const [jobTitle, setJobTitle] = useState("");
   const [location, setLocation] = useState("");
   const [minScore, setMinScore] = useState(70);
+  const hasAutoScraped = useRef(false);
 
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
@@ -61,7 +62,17 @@ export default function Home() {
   };
 
   useEffect(() => {
-    loadJobs();
+    if (hasAutoScraped.current) {
+      loadJobs();
+      return;
+    }
+
+    hasAutoScraped.current = true;
+    const runInitial = async () => {
+      await runScrape();
+    };
+
+    runInitial();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryParams]);
 
@@ -143,6 +154,7 @@ export default function Home() {
                   <th className="px-4 py-3">Company</th>
                   <th className="px-4 py-3">Role</th>
                   <th className="px-4 py-3">Location</th>
+                  <th className="px-4 py-3">Match Score</th>
                   <th className="px-4 py-3">Date Posted</th>
                   <th className="px-4 py-3">Apply</th>
                 </tr>
@@ -153,6 +165,7 @@ export default function Home() {
                     <td className="px-4 py-3 font-medium">{job.company}</td>
                     <td className="px-4 py-3">{job.role}</td>
                     <td className="px-4 py-3">{job.location}</td>
+                    <td className="px-4 py-3">{job.match_score.toFixed(1)}</td>
                     <td className="px-4 py-3">{job.date_posted}</td>
                     <td className="px-4 py-3">
                       <a
