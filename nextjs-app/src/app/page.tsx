@@ -13,7 +13,8 @@ type Job = {
 };
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  (typeof window === "undefined" ? "" : window.location.origin);
 
 export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -34,7 +35,7 @@ export default function Home() {
   const loadJobs = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/jobs?${queryParams}`);
+      const response = await fetch(`${API_BASE_URL}/api/jobs?${queryParams}`);
       const data = await response.json();
       setJobs(data);
     } catch (error) {
@@ -47,7 +48,7 @@ export default function Home() {
   const runScrape = async () => {
     setScrapeStatus("Running scraper...");
     try {
-      const response = await fetch(`${API_BASE_URL}/scrape`, {
+      const response = await fetch(`${API_BASE_URL}/api/scrape`, {
         method: "POST",
       });
       const data = await response.json();
