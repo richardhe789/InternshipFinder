@@ -34,13 +34,21 @@ async def startup_event():
     init_db()
 
 
-@app.get("/health")
-def health_check():
+def _health_payload():
     return {"status": "ok"}
 
 
-@app.get("/jobs")
-def list_jobs(
+@app.get("/health")
+def health_check():
+    return _health_payload()
+
+
+@app.get("/api/health")
+def api_health_check():
+    return _health_payload()
+
+
+def _list_jobs(
     job_title: Optional[str] = None,
     location: Optional[str] = None,
     min_match_score: Optional[float] = None,
@@ -54,8 +62,25 @@ def list_jobs(
     return df.to_dict(orient="records")
 
 
-@app.post("/scrape")
-async def run_scrape():
+@app.get("/jobs")
+def list_jobs(
+    job_title: Optional[str] = None,
+    location: Optional[str] = None,
+    min_match_score: Optional[float] = None,
+):
+    return _list_jobs(job_title=job_title, location=location, min_match_score=min_match_score)
+
+
+@app.get("/api/jobs")
+def api_list_jobs(
+    job_title: Optional[str] = None,
+    location: Optional[str] = None,
+    min_match_score: Optional[float] = None,
+):
+    return _list_jobs(job_title=job_title, location=location, min_match_score=min_match_score)
+
+
+async def _run_scrape():
     try:
         internships = await scrape_all_sources()
         inserted_count = save_to_db(internships)
@@ -66,3 +91,13 @@ async def run_scrape():
     except Exception as exc:
         logger.exception("Scrape failed")
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.post("/scrape")
+async def run_scrape():
+    return await _run_scrape()
+
+
+@app.post("/api/scrape")
+async def api_run_scrape():
+    return await _run_scrape()
