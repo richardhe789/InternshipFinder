@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Any, Mapping, Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,8 +8,12 @@ try:
     from backend.database import fetch_from_db, init_db, save_to_db
     from backend.scraper import scrape_all_sources
 except ModuleNotFoundError:
-    from database import fetch_from_db, init_db, save_to_db
-    from scraper import scrape_all_sources
+    import sys
+    from pathlib import Path
+
+    sys.path.append(str(Path(__file__).resolve().parents[1]))
+    from backend.database import fetch_from_db, init_db, save_to_db
+    from backend.scraper import scrape_all_sources
 
 
 logger = logging.getLogger(__name__)
@@ -41,7 +45,7 @@ def list_jobs(
     location: Optional[str] = None,
     min_match_score: Optional[float] = None,
 ):
-    filters = {
+    filters: Mapping[str, Any] = {
         "job_title": job_title,
         "location": location,
         "min_match_score": min_match_score,

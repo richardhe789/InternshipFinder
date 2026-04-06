@@ -1,7 +1,9 @@
 import sqlite3
-from typing import Dict, Optional
+
+from typing import Any, Iterable, Mapping, Optional
 
 import pandas as pd
+from pandas.errors import DatabaseError
 
 
 def init_db(db_path: str = "internships.db") -> None:
@@ -24,7 +26,7 @@ def init_db(db_path: str = "internships.db") -> None:
     conn.close()
 
 
-def save_to_db(internships_data, db_path: str = "internships.db") -> int:
+def save_to_db(internships_data: Iterable[Mapping[str, Any]], db_path: str = "internships.db") -> int:
     if not internships_data:
         return 0
 
@@ -59,12 +61,14 @@ def save_to_db(internships_data, db_path: str = "internships.db") -> int:
     return inserted_count
 
 
-def fetch_from_db(filters: Optional[Dict[str, str]] = None, db_path: str = "internships.db") -> pd.DataFrame:
+def fetch_from_db(
+    filters: Optional[Mapping[str, Any]] = None, db_path: str = "internships.db"
+) -> pd.DataFrame:
     conn = sqlite3.connect(db_path)
     query = "SELECT * FROM internships ORDER BY date_posted DESC"
     try:
         df = pd.read_sql_query(query, conn)
-    except pd.io.sql.DatabaseError:
+    except DatabaseError:
         df = pd.DataFrame(
             columns=["id", "company", "role", "location", "url", "date_posted", "match_score"]
         )

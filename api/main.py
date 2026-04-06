@@ -7,4 +7,6 @@ except ModuleNotFoundError:
     sys.path.append(str(Path(__file__).resolve().parents[1]))
     from backend.main import app
 
-__all__ = ["app"]
+handler = app
+
+__all__ = ["app", "handler"]

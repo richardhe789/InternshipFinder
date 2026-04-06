@@ -6,7 +6,7 @@ A full-stack internship dashboard with a FastAPI backend and a Next.js frontend.
 
 - Next.js dashboard to view internship listings
 - Advanced filtering by job title, location, and match score
-- Direct scraping from high-signal sources like the SimplifyJobs GitHub repository
+- Direct scraping from the SimplifyJobs GitHub repository (via GitHub API)
 - Local SQLite database for persistent storage
 - Duplicate prevention based on unique URLs
 - One-click application button for each listing
@@ -61,8 +61,7 @@ Open the dashboard at http://localhost:3000 (frontend) and ensure the API is run
 
 ## How It Works
 
-- The backend scrapes internship data from SimplifyJobs and company ATS APIs (Greenhouse/Lever).
-- SimplifyJobs uses the official Typesense API endpoint (js-ha.simplify.jobs) for reliability.
+- The backend scrapes internship data from the SimplifyJobs GitHub README via the GitHub API.
 - Data is stored in a local SQLite database (`internships.db`).
 - The frontend queries the backend API to render listings and trigger scrapes.
 - Duplicate listings are prevented by checking unique URLs.
@@ -75,10 +74,7 @@ Open the dashboard at http://localhost:3000 (frontend) and ensure the API is run
 
 ## Customization
 
-To add more scraping sources:
-1. Modify the `scrape_simplifyjobs_internships()` function or add new scraping functions
-2. Update the `run_scraper()` function to include your new scraping functions
-3. Adjust the database schema in `init_db()` if needed
+SimplifyJobs is fetched via the GitHub API. If you hit rate limits, set `GITHUB_TOKEN` in your environment.
 
 ## Hosting Notes
 
