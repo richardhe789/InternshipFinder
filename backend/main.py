@@ -161,7 +161,7 @@ async def score_jobs(
     job_title: Optional[str] = None,
     location: Optional[str] = None,
     min_match_score: Optional[float] = None,
-    limit: int = 10,
+    limit: int = 15,
 ):
     file_bytes = await file.read()
     resume_text = _extract_resume_text(file.filename or "", file_bytes)

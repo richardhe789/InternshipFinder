@@ -26,7 +26,7 @@ export default function Home() {
   const [jobTitle, setJobTitle] = useState("");
   const [location, setLocation] = useState("");
   const [minScore, setMinScore] = useState(70);
-  const [resultLimit, setResultLimit] = useState(10);
+  const [resultLimit, setResultLimit] = useState(15);
   const hasAutoScraped = useRef(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [scoreStatus, setScoreStatus] = useState<string | null>(null);
@@ -212,6 +212,7 @@ export default function Home() {
               onChange={(event) => setResultLimit(Number(event.target.value))}
             >
               <option value={10}>Top 10</option>
+              <option value={15}>Top 15</option>
               <option value={25}>Top 25</option>
               <option value={50}>Top 50</option>
               <option value={100}>Top 100</option>
