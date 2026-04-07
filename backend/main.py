@@ -184,6 +184,44 @@ def _extract_companies(text: str) -> list[str]:
     return list(dict.fromkeys(filtered))[:20]
 
 
+def _extract_email(text: str) -> Optional[str]:
+    match = re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", text)
+    return match.group(0) if match else None
+
+
+def _extract_phone(text: str) -> Optional[str]:
+    match = re.search(r"(\+?\d{1,3}[\s.-]?)?(\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}", text)
+    return match.group(0) if match else None
+
+
+def _extract_linkedin(text: str) -> Optional[str]:
+    match = re.search(r"https?://(www\.)?linkedin\.com/[\w\-./]+", text, re.IGNORECASE)
+    return match.group(0) if match else None
+
+
+def _extract_github(text: str) -> Optional[str]:
+    match = re.search(r"https?://(www\.)?github\.com/[\w\-./]+", text, re.IGNORECASE)
+    return match.group(0) if match else None
+
+
+def _extract_name(text: str) -> Optional[str]:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    for line in lines[:5]:
+        if len(line.split()) in {2, 3} and line.replace(" ", "").isalpha():
+            return line
+    return None
+
+
+def _extract_courses(text: str) -> list[str]:
+    courses_pattern = re.compile(r"(Relevant Coursework|Courses|Coursework)[:\s]*(.*)", re.IGNORECASE)
+    courses: list[str] = []
+    for line in text.splitlines():
+        match = courses_pattern.search(line)
+        if match:
+            courses.extend([course.strip() for course in match.group(2).split(",") if course.strip()])
+    return courses[:20]
+
+
 def _score_jobs(resume_text: str, jobs: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
     normalized_resume = _normalize_text(resume_text)
     if not normalized_resume:
@@ -242,7 +280,18 @@ async def parse_resume(file: UploadFile = File(...)):
     date_ranges = _extract_date_ranges(resume_text)
     experience_titles = _extract_experience_titles(resume_text)
     companies = _extract_companies(resume_text)
+    email = _extract_email(resume_text)
+    phone = _extract_phone(resume_text)
+    linkedin = _extract_linkedin(resume_text)
+    github = _extract_github(resume_text)
+    name = _extract_name(resume_text)
+    courses = _extract_courses(resume_text)
     return {
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "linkedin": linkedin,
+        "github": github,
         "characters": len(resume_text),
         "preview": resume_text[:500],
         "keywords": keywords,
@@ -253,6 +302,7 @@ async def parse_resume(file: UploadFile = File(...)):
         "skills_section": sections.get("skills", ""),
         "experience_section": sections.get("experience", ""),
         "projects_section": sections.get("projects", ""),
+        "courses": courses,
     }
 
 

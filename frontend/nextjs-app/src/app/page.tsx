@@ -20,6 +20,11 @@ type ScoreResponse = {
 type ResumePreview = {
   characters: number;
   preview: string;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  linkedin: string | null;
+  github: string | null;
   keywords: string[];
   experience_titles: string[];
   companies: string[];
@@ -28,6 +33,7 @@ type ResumePreview = {
   skills_section: string;
   experience_section: string;
   projects_section: string;
+  courses: string[];
 };
 
 const API_BASE_URL = "";
@@ -283,6 +289,31 @@ export default function Home() {
             <p className="mt-1 text-xs text-slate-500">
               Characters parsed: {resumePreview.characters}
             </p>
+            {(resumePreview.name || resumePreview.email || resumePreview.phone) && (
+              <div className="mt-2">
+                <p className="text-xs uppercase text-slate-500">Contact</p>
+                <p className="mt-1 text-sm">
+                  {resumePreview.name && <span>{resumePreview.name}</span>}
+                  {resumePreview.email && (
+                    <span className="ml-2">{resumePreview.email}</span>
+                  )}
+                  {resumePreview.phone && (
+                    <span className="ml-2">{resumePreview.phone}</span>
+                  )}
+                </p>
+              </div>
+            )}
+            {(resumePreview.linkedin || resumePreview.github) && (
+              <div className="mt-2">
+                <p className="text-xs uppercase text-slate-500">Profiles</p>
+                <p className="mt-1 text-sm">
+                  {resumePreview.linkedin && (
+                    <span className="mr-2">{resumePreview.linkedin}</span>
+                  )}
+                  {resumePreview.github && <span>{resumePreview.github}</span>}
+                </p>
+              </div>
+            )}
             <p className="mt-2 whitespace-pre-wrap leading-relaxed">
               {resumePreview.preview}
             </p>
@@ -332,6 +363,12 @@ export default function Home() {
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.projects_section}
                 </p>
+              </div>
+            )}
+            {resumePreview.courses?.length > 0 && (
+              <div className="mt-4">
+                <p className="text-xs uppercase text-slate-500">Relevant Courses</p>
+                <p className="mt-1 text-sm">{resumePreview.courses.join(", ")}</p>
               </div>
             )}
             {resumePreview.education && (
