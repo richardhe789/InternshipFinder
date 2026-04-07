@@ -197,17 +197,17 @@ export default function Home() {
   }, [resumeFile]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white">
-      <header className="border-b border-white/10 bg-white/10 backdrop-blur">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div>
             <h1 className="text-2xl font-semibold">Local Internship Dashboard</h1>
-            <p className="text-sm text-slate-200">
+            <p className="text-sm text-slate-600">
               Powered by SimplifyJobs + company ATS boards
             </p>
           </div>
           <button
-            className="rounded-lg bg-white/20 px-4 py-2 text-white backdrop-blur hover:bg-white/30"
+            className="rounded-lg bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
             onClick={runScrape}
           >
             Run Scraper
@@ -216,31 +216,31 @@ export default function Home() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-6">
-        <section className="grid gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 shadow-lg backdrop-blur md:grid-cols-3">
+        <section className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg md:grid-cols-3">
           <div>
-            <label className="text-xs font-semibold uppercase text-slate-200">
+            <label className="text-xs font-semibold uppercase text-slate-600">
               Job Title
             </label>
             <input
-              className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-slate-300"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400"
               placeholder="SWE, ML, AI"
               value={jobTitle}
               onChange={(event) => setJobTitle(event.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs font-semibold uppercase text-slate-200">
+            <label className="text-xs font-semibold uppercase text-slate-600">
               Location
             </label>
             <input
-              className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-slate-300"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder:text-slate-400"
               placeholder="Remote, NYC, etc."
               value={location}
               onChange={(event) => setLocation(event.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs font-semibold uppercase text-slate-200">
+            <label className="text-xs font-semibold uppercase text-slate-600">
               Minimum Match Score: {minScore}
             </label>
             <input
@@ -255,30 +255,30 @@ export default function Home() {
         </section>
 
         {scrapeStatus && (
-          <p className="mt-4 rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm text-slate-200 backdrop-blur">
+          <p className="mt-4 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600">
             {scrapeStatus}
           </p>
         )}
 
-        <section className="mt-4 grid gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 shadow-lg backdrop-blur md:grid-cols-[1fr_auto]">
+        <section className="mt-4 grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg md:grid-cols-[1fr_auto]">
           <div>
-            <label className="text-xs font-semibold uppercase text-slate-200">
+            <label className="text-xs font-semibold uppercase text-slate-600">
               Resume (PDF or DOCX)
             </label>
             <input
               type="file"
               accept=".pdf,.docx"
-              className="mt-1 w-full text-slate-100"
+              className="mt-1 w-full text-slate-700"
               onChange={(event) => setResumeFile(event.target.files?.[0] ?? null)}
             />
             {resumeFile && (
-              <p className="mt-1 text-xs text-slate-300">Selected: {resumeFile.name}</p>
+              <p className="mt-1 text-xs text-slate-500">Selected: {resumeFile.name}</p>
             )}
-            <label className="mt-3 block text-xs font-semibold uppercase text-slate-200">
+            <label className="mt-3 block text-xs font-semibold uppercase text-slate-600">
               Results to Show
             </label>
             <select
-              className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900"
               value={resultLimit}
               onChange={(event) => setResultLimit(Number(event.target.value))}
             >
@@ -291,13 +291,13 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-end gap-2">
             <button
-              className="rounded-lg border border-white/30 px-4 py-2 text-white hover:bg-white/10"
+              className="rounded-lg border border-slate-300 px-4 py-2 text-slate-800 hover:bg-slate-100"
               onClick={() => parseResume()}
             >
               Preview Resume
             </button>
             <button
-              className="rounded-lg bg-white/20 px-4 py-2 text-white backdrop-blur hover:bg-white/30"
+              className="rounded-lg bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
               onClick={() => scoreJobs()}
             >
               Score Jobs
@@ -306,18 +306,18 @@ export default function Home() {
         </section>
 
         {previewStatus && (
-          <p className="mt-2 text-sm text-slate-300">{previewStatus}</p>
+          <p className="mt-2 text-sm text-slate-600">{previewStatus}</p>
         )}
 
         {resumePreview && (
-          <div className="mt-2 rounded-2xl border border-white/15 bg-white/10 p-4 text-sm text-slate-200 shadow-lg backdrop-blur">
-            <p className="text-xs uppercase text-slate-300">Resume Preview</p>
-            <p className="mt-1 text-xs text-slate-300">
+          <div className="mt-2 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700 shadow-lg">
+            <p className="text-xs uppercase text-slate-500">Resume Preview</p>
+            <p className="mt-1 text-xs text-slate-500">
               Characters parsed: {resumePreview.characters}
             </p>
             {(resumePreview.name || resumePreview.email || resumePreview.phone) && (
               <div className="mt-2">
-                <p className="text-xs uppercase text-slate-300">Contact</p>
+                <p className="text-xs uppercase text-slate-500">Contact</p>
                 <p className="mt-1 text-sm">
                   {resumePreview.name && <span>{resumePreview.name}</span>}
                   {resumePreview.email && (
@@ -331,7 +331,7 @@ export default function Home() {
             )}
             {(resumePreview.linkedin || resumePreview.github) && (
               <div className="mt-2">
-                <p className="text-xs uppercase text-slate-300">Profiles</p>
+                <p className="text-xs uppercase text-slate-500">Profiles</p>
                 <p className="mt-1 text-sm">
                   {resumePreview.linkedin && (
                     <span className="mr-2">{resumePreview.linkedin}</span>
@@ -345,31 +345,31 @@ export default function Home() {
             </p>
             {resumePreview.keywords?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Keywords</p>
+                <p className="text-xs uppercase text-slate-500">Keywords</p>
                 <p className="mt-1 text-sm">{resumePreview.keywords.join(", ")}</p>
               </div>
             )}
             {resumePreview.experience_titles?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Experience Titles</p>
+                <p className="text-xs uppercase text-slate-500">Experience Titles</p>
                 <p className="mt-1 text-sm">{resumePreview.experience_titles.join(", ")}</p>
               </div>
             )}
             {resumePreview.companies?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Companies</p>
+                <p className="text-xs uppercase text-slate-500">Companies</p>
                 <p className="mt-1 text-sm">{resumePreview.companies.join(", ")}</p>
               </div>
             )}
             {resumePreview.date_ranges?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Date Ranges</p>
+                <p className="text-xs uppercase text-slate-500">Date Ranges</p>
                 <p className="mt-1 text-sm">{resumePreview.date_ranges.join(", ")}</p>
               </div>
             )}
             {resumePreview.skills_section && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Skills Section</p>
+                <p className="text-xs uppercase text-slate-500">Skills Section</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.skills_section}
                 </p>
@@ -377,7 +377,7 @@ export default function Home() {
             )}
             {resumePreview.experience_section && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Experience Section</p>
+                <p className="text-xs uppercase text-slate-500">Experience Section</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.experience_section}
                 </p>
@@ -385,7 +385,7 @@ export default function Home() {
             )}
             {resumePreview.projects_section && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Projects Section</p>
+                <p className="text-xs uppercase text-slate-500">Projects Section</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.projects_section}
                 </p>
@@ -393,13 +393,13 @@ export default function Home() {
             )}
             {resumePreview.courses?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Relevant Courses</p>
+                <p className="text-xs uppercase text-slate-500">Relevant Courses</p>
                 <p className="mt-1 text-sm">{resumePreview.courses.join(", ")}</p>
               </div>
             )}
             {resumePreview.education && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-300">Education Section</p>
+                <p className="text-xs uppercase text-slate-500">Education Section</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.education}
                 </p>
@@ -409,29 +409,29 @@ export default function Home() {
         )}
 
         {scoreStatus && (
-          <p className="mt-2 text-sm text-slate-300">{scoreStatus}</p>
+          <p className="mt-2 text-sm text-slate-600">{scoreStatus}</p>
         )}
 
         {!hasScored && (
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-2 text-sm text-slate-600">
             Upload a resume to compute match scores. Scores default to 0 until then.
           </p>
         )}
 
         {hasScored && scoreExplanation && (
-          <p className="mt-2 text-sm text-slate-300">{scoreExplanation}</p>
+          <p className="mt-2 text-sm text-slate-600">{scoreExplanation}</p>
         )}
 
-        <section className="mt-6 rounded-2xl border border-white/15 bg-white/10 shadow-lg backdrop-blur">
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+        <section className="mt-6 rounded-2xl border border-slate-200 bg-white shadow-lg">
+          <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
             <h2 className="text-lg font-semibold">Internships</h2>
-            <span className="text-sm text-slate-300">
+            <span className="text-sm text-slate-600">
               {loading ? "Loading..." : `${jobs.length} results`}
             </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-white/5 text-xs uppercase text-slate-300">
+              <thead className="bg-slate-100 text-xs uppercase text-slate-600">
                 <tr>
                   <th className="px-4 py-3">Company</th>
                   <th className="px-4 py-3">Role</th>
@@ -443,7 +443,7 @@ export default function Home() {
               </thead>
               <tbody>
                 {jobs.map((job) => (
-                  <tr key={`${job.company}-${job.url}`} className="border-t border-white/10">
+                  <tr key={`${job.company}-${job.url}`} className="border-t border-slate-200">
                     <td className="px-4 py-3 font-medium">{job.company}</td>
                     <td className="px-4 py-3">{job.role}</td>
                     <td className="px-4 py-3">{job.location}</td>
@@ -451,7 +451,7 @@ export default function Home() {
                     <td className="px-4 py-3">{job.date_posted}</td>
                     <td className="px-4 py-3">
                       <a
-                        className="rounded bg-white/20 px-3 py-1 text-white hover:bg-white/30"
+                        className="rounded bg-slate-900 px-3 py-1 text-white hover:bg-slate-800"
                         href={job.url}
                         target="_blank"
                         rel="noreferrer"
