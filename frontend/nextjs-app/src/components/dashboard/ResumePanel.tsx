@@ -48,13 +48,13 @@ export default function ResumePanel({
       <div className="flex flex-col items-end gap-2">
         <button
           className="rounded-lg border border-slate-300 px-4 py-2 text-slate-800 hover:bg-slate-100"
-          onClick={onPreview}
+          onClick={() => onPreview()}
         >
           Preview Resume
         </button>
         <button
           className="rounded-lg bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
-          onClick={onScore}
+          onClick={() => onScore()}
         >
           Score Jobs
         </button>
