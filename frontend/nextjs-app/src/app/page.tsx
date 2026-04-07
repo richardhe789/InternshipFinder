@@ -59,9 +59,8 @@ export default function Home() {
     const params = new URLSearchParams();
     if (jobTitle) params.append("job_title", jobTitle);
     if (location) params.append("location", location);
-    if (minScore !== null) params.append("min_match_score", String(minScore));
     return params.toString();
-  }, [jobTitle, location, minScore]);
+  }, [jobTitle, location]);
 
   const loadJobs = async () => {
     setLoading(true);
@@ -72,10 +71,14 @@ export default function Home() {
         ...job,
         match_score: 0,
       }));
-      setJobs(withDefaultScores);
-      setScoredJobs(withDefaultScores);
-      setHasScored(false);
-      setScoreExplanation(null);
+      if (resumeFile && hasScored && scoredJobs.length > 0) {
+        setJobs(scoredJobs.filter((job) => job.match_score >= minScore));
+      } else {
+        setJobs(withDefaultScores);
+        setScoredJobs(withDefaultScores);
+        setHasScored(false);
+        setScoreExplanation(null);
+      }
     } catch (error) {
       console.error("Failed to load jobs", error);
     } finally {
@@ -83,15 +86,16 @@ export default function Home() {
     }
   };
 
-  const parseResume = async () => {
-    if (!resumeFile) {
+  const parseResume = async (fileOverride?: File | null) => {
+    const activeFile = fileOverride ?? resumeFile;
+    if (!activeFile) {
       setPreviewStatus("Please upload a resume first.");
       return;
     }
 
     setPreviewStatus("Parsing resume...");
     const formData = new FormData();
-    formData.append("file", resumeFile);
+    formData.append("file", activeFile);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/resume/parse`, {
@@ -101,15 +105,16 @@ export default function Home() {
       const data: ResumePreview = await response.json();
       setResumePreview(data);
       setPreviewStatus("Resume parsed. Review the preview below.");
-      await scoreJobs();
+      await scoreJobs(activeFile);
     } catch (error) {
       console.error("Failed to parse resume", error);
       setPreviewStatus("Failed to parse resume. Check backend logs.");
     }
   };
 
-  const scoreJobs = async () => {
-    if (!resumeFile) {
+  const scoreJobs = async (fileOverride?: File | null) => {
+    const activeFile = fileOverride ?? resumeFile;
+    if (!activeFile) {
       setScoreStatus("Please upload a resume first.");
       return;
     }
@@ -118,7 +123,7 @@ export default function Home() {
     setScoreStatus("Scoring jobs against resume...");
 
     const formData = new FormData();
-    formData.append("file", resumeFile);
+    formData.append("file", activeFile);
 
     try {
       const response = await fetch(
@@ -181,18 +186,28 @@ export default function Home() {
     setJobs(scoredJobs.filter((job) => job.match_score >= minScore));
   }, [minScore, scoredJobs, hasScored]);
 
+  useEffect(() => {
+    if (resumeFile) {
+      return;
+    }
+    setHasScored(false);
+    setScoreExplanation(null);
+    setJobs((prev) => prev.map((job) => ({ ...job, match_score: 0 })));
+    setScoredJobs((prev) => prev.map((job) => ({ ...job, match_score: 0 })));
+  }, [resumeFile]);
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white">
+      <header className="border-b border-white/10 bg-white/10 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div>
             <h1 className="text-2xl font-semibold">Local Internship Dashboard</h1>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-200">
               Powered by SimplifyJobs + company ATS boards
             </p>
           </div>
           <button
-            className="rounded bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
+            className="rounded-lg bg-white/20 px-4 py-2 text-white backdrop-blur hover:bg-white/30"
             onClick={runScrape}
           >
             Run Scraper
@@ -201,31 +216,31 @@ export default function Home() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-6">
-        <section className="grid gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-3">
+        <section className="grid gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 shadow-lg backdrop-blur md:grid-cols-3">
           <div>
-            <label className="text-xs font-semibold uppercase text-slate-500">
+            <label className="text-xs font-semibold uppercase text-slate-200">
               Job Title
             </label>
             <input
-              className="mt-1 w-full rounded border border-slate-200 px-3 py-2"
+              className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-slate-300"
               placeholder="SWE, ML, AI"
               value={jobTitle}
               onChange={(event) => setJobTitle(event.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs font-semibold uppercase text-slate-500">
+            <label className="text-xs font-semibold uppercase text-slate-200">
               Location
             </label>
             <input
-              className="mt-1 w-full rounded border border-slate-200 px-3 py-2"
+              className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-slate-300"
               placeholder="Remote, NYC, etc."
               value={location}
               onChange={(event) => setLocation(event.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs font-semibold uppercase text-slate-500">
+            <label className="text-xs font-semibold uppercase text-slate-200">
               Minimum Match Score: {minScore}
             </label>
             <input
@@ -240,30 +255,30 @@ export default function Home() {
         </section>
 
         {scrapeStatus && (
-          <p className="mt-4 rounded border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600">
+          <p className="mt-4 rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm text-slate-200 backdrop-blur">
             {scrapeStatus}
           </p>
         )}
 
-        <section className="mt-4 grid gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-[1fr_auto]">
+        <section className="mt-4 grid gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 shadow-lg backdrop-blur md:grid-cols-[1fr_auto]">
           <div>
-            <label className="text-xs font-semibold uppercase text-slate-500">
+            <label className="text-xs font-semibold uppercase text-slate-200">
               Resume (PDF or DOCX)
             </label>
             <input
               type="file"
               accept=".pdf,.docx"
-              className="mt-1 w-full"
+              className="mt-1 w-full text-slate-100"
               onChange={(event) => setResumeFile(event.target.files?.[0] ?? null)}
             />
             {resumeFile && (
-              <p className="mt-1 text-xs text-slate-500">Selected: {resumeFile.name}</p>
+              <p className="mt-1 text-xs text-slate-300">Selected: {resumeFile.name}</p>
             )}
-            <label className="mt-3 block text-xs font-semibold uppercase text-slate-500">
+            <label className="mt-3 block text-xs font-semibold uppercase text-slate-200">
               Results to Show
             </label>
             <select
-              className="mt-1 w-full rounded border border-slate-200 px-3 py-2"
+              className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white"
               value={resultLimit}
               onChange={(event) => setResultLimit(Number(event.target.value))}
             >
@@ -276,14 +291,14 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-end gap-2">
             <button
-              className="rounded border border-blue-600 px-4 py-2 text-blue-600 hover:bg-blue-50"
-              onClick={parseResume}
+              className="rounded-lg border border-white/30 px-4 py-2 text-white hover:bg-white/10"
+              onClick={() => parseResume()}
             >
               Preview Resume
             </button>
             <button
-              className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500"
-              onClick={scoreJobs}
+              className="rounded-lg bg-white/20 px-4 py-2 text-white backdrop-blur hover:bg-white/30"
+              onClick={() => scoreJobs()}
             >
               Score Jobs
             </button>
@@ -291,18 +306,18 @@ export default function Home() {
         </section>
 
         {previewStatus && (
-          <p className="mt-2 text-sm text-slate-500">{previewStatus}</p>
+          <p className="mt-2 text-sm text-slate-300">{previewStatus}</p>
         )}
 
         {resumePreview && (
-          <div className="mt-2 rounded border border-slate-200 bg-white p-4 text-sm text-slate-600">
-            <p className="text-xs uppercase text-slate-500">Resume Preview</p>
-            <p className="mt-1 text-xs text-slate-500">
+          <div className="mt-2 rounded-2xl border border-white/15 bg-white/10 p-4 text-sm text-slate-200 shadow-lg backdrop-blur">
+            <p className="text-xs uppercase text-slate-300">Resume Preview</p>
+            <p className="mt-1 text-xs text-slate-300">
               Characters parsed: {resumePreview.characters}
             </p>
             {(resumePreview.name || resumePreview.email || resumePreview.phone) && (
               <div className="mt-2">
-                <p className="text-xs uppercase text-slate-500">Contact</p>
+                <p className="text-xs uppercase text-slate-300">Contact</p>
                 <p className="mt-1 text-sm">
                   {resumePreview.name && <span>{resumePreview.name}</span>}
                   {resumePreview.email && (
@@ -316,7 +331,7 @@ export default function Home() {
             )}
             {(resumePreview.linkedin || resumePreview.github) && (
               <div className="mt-2">
-                <p className="text-xs uppercase text-slate-500">Profiles</p>
+                <p className="text-xs uppercase text-slate-300">Profiles</p>
                 <p className="mt-1 text-sm">
                   {resumePreview.linkedin && (
                     <span className="mr-2">{resumePreview.linkedin}</span>
@@ -330,31 +345,31 @@ export default function Home() {
             </p>
             {resumePreview.keywords?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Keywords</p>
+                <p className="text-xs uppercase text-slate-300">Keywords</p>
                 <p className="mt-1 text-sm">{resumePreview.keywords.join(", ")}</p>
               </div>
             )}
             {resumePreview.experience_titles?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Experience Titles</p>
+                <p className="text-xs uppercase text-slate-300">Experience Titles</p>
                 <p className="mt-1 text-sm">{resumePreview.experience_titles.join(", ")}</p>
               </div>
             )}
             {resumePreview.companies?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Companies</p>
+                <p className="text-xs uppercase text-slate-300">Companies</p>
                 <p className="mt-1 text-sm">{resumePreview.companies.join(", ")}</p>
               </div>
             )}
             {resumePreview.date_ranges?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Date Ranges</p>
+                <p className="text-xs uppercase text-slate-300">Date Ranges</p>
                 <p className="mt-1 text-sm">{resumePreview.date_ranges.join(", ")}</p>
               </div>
             )}
             {resumePreview.skills_section && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Skills Section</p>
+                <p className="text-xs uppercase text-slate-300">Skills Section</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.skills_section}
                 </p>
@@ -362,7 +377,7 @@ export default function Home() {
             )}
             {resumePreview.experience_section && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Experience Section</p>
+                <p className="text-xs uppercase text-slate-300">Experience Section</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.experience_section}
                 </p>
@@ -370,7 +385,7 @@ export default function Home() {
             )}
             {resumePreview.projects_section && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Projects Section</p>
+                <p className="text-xs uppercase text-slate-300">Projects Section</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.projects_section}
                 </p>
@@ -378,13 +393,13 @@ export default function Home() {
             )}
             {resumePreview.courses?.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Relevant Courses</p>
+                <p className="text-xs uppercase text-slate-300">Relevant Courses</p>
                 <p className="mt-1 text-sm">{resumePreview.courses.join(", ")}</p>
               </div>
             )}
             {resumePreview.education && (
               <div className="mt-4">
-                <p className="text-xs uppercase text-slate-500">Education Section</p>
+                <p className="text-xs uppercase text-slate-300">Education Section</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm">
                   {resumePreview.education}
                 </p>
@@ -394,29 +409,29 @@ export default function Home() {
         )}
 
         {scoreStatus && (
-          <p className="mt-2 text-sm text-slate-500">{scoreStatus}</p>
+          <p className="mt-2 text-sm text-slate-300">{scoreStatus}</p>
         )}
 
         {!hasScored && (
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-slate-300">
             Upload a resume to compute match scores. Scores default to 0 until then.
           </p>
         )}
 
         {hasScored && scoreExplanation && (
-          <p className="mt-2 text-sm text-slate-500">{scoreExplanation}</p>
+          <p className="mt-2 text-sm text-slate-300">{scoreExplanation}</p>
         )}
 
-        <section className="mt-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+        <section className="mt-6 rounded-2xl border border-white/15 bg-white/10 shadow-lg backdrop-blur">
+          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <h2 className="text-lg font-semibold">Internships</h2>
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-300">
               {loading ? "Loading..." : `${jobs.length} results`}
             </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+              <thead className="bg-white/5 text-xs uppercase text-slate-300">
                 <tr>
                   <th className="px-4 py-3">Company</th>
                   <th className="px-4 py-3">Role</th>
@@ -428,7 +443,7 @@ export default function Home() {
               </thead>
               <tbody>
                 {jobs.map((job) => (
-                  <tr key={`${job.company}-${job.url}`} className="border-t">
+                  <tr key={`${job.company}-${job.url}`} className="border-t border-white/10">
                     <td className="px-4 py-3 font-medium">{job.company}</td>
                     <td className="px-4 py-3">{job.role}</td>
                     <td className="px-4 py-3">{job.location}</td>
@@ -436,7 +451,7 @@ export default function Home() {
                     <td className="px-4 py-3">{job.date_posted}</td>
                     <td className="px-4 py-3">
                       <a
-                        className="rounded bg-blue-600 px-3 py-1 text-white"
+                        className="rounded bg-white/20 px-3 py-1 text-white hover:bg-white/30"
                         href={job.url}
                         target="_blank"
                         rel="noreferrer"
