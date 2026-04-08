@@ -13,7 +13,7 @@ type ScoreResponse = {
   explanation: string;
 };
 
-type TabKey = "build" | "matches";
+type TabKey = "build" | "matches" | "sync";
 
 const API_BASE_URL = "";
 
@@ -35,6 +35,10 @@ export default function Home() {
   const [resumePreview, setResumePreview] = useState<ResumePreview | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [previewStatus, setPreviewStatus] = useState<string | null>(null);
+
+  const stepNumber =
+    activeTab === "sync" ? 3 : activeTab === "matches" ? 2 : 1;
+  const stepProgress = `${Math.round((stepNumber / 3) * 100)}%`;
 
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
@@ -213,7 +217,11 @@ export default function Home() {
             <span className="material-symbols-outlined">auto_awesome</span>
             Matches
           </button>
-          <button type="button" className="side-nav__link">
+          <button
+            type="button"
+            className={`side-nav__link ${activeTab === "sync" ? "side-nav__link--active" : ""}`}
+            onClick={() => setActiveTab("sync")}
+          >
             <span className="material-symbols-outlined">sync_alt</span>
             Sync
           </button>
@@ -246,9 +254,9 @@ export default function Home() {
             </p>
           </div>
           <div className="hero-progress">
-            <span>Step 1 of 3</span>
+            <span>Step {stepNumber} of 3</span>
             <div className="progress-track">
-              <div className="progress-fill" />
+              <div className="progress-fill" style={{ width: stepProgress }} />
             </div>
           </div>
         </header>
@@ -362,7 +370,7 @@ export default function Home() {
               </div>
             </aside>
           </div>
-        ) : (
+        ) : activeTab === "matches" ? (
           <section className="content-stack">
             <div className="card match-summary">
               <h3 className="card-title">
@@ -406,6 +414,45 @@ export default function Home() {
 
             <JobsTable jobs={jobs} loading={loading} />
           </section>
+        ) : (
+          <section className="content-stack">
+            <div className="card match-summary">
+              <h3 className="card-title">
+                <span className="material-symbols-outlined">sync_alt</span>
+                Sync Progress
+              </h3>
+              <p className="hero-description">
+                Connect your workflow to keep internships, resume updates, and
+                outreach status in one place.
+              </p>
+              <div className="match-actions">
+                <button
+                  className="footer-primary"
+                  type="button"
+                  onClick={() => setActiveTab("matches")}
+                >
+                  Back to Matches
+                </button>
+                <button
+                  className="footer-secondary"
+                  type="button"
+                  onClick={() => setActiveTab("build")}
+                >
+                  Edit Resume Signals
+                </button>
+              </div>
+            </div>
+            <div className="card interest-card">
+              <h3 className="card-title">
+                <span className="material-symbols-outlined">check_circle</span>
+                Next Steps
+              </h3>
+              <p className="hero-description">
+                We&apos;ll add calendar, CRM, and notification sync in this step. For
+                now, use it as a checkpoint before export.
+              </p>
+            </div>
+          </section>
         )}
 
         <footer className="footer-actions">
@@ -413,7 +460,11 @@ export default function Home() {
             <span className="material-symbols-outlined">arrow_back</span>
             Previous Step
           </button>
-          <button className="footer-primary" type="button">
+          <button
+            className="footer-primary"
+            type="button"
+            onClick={() => setActiveTab("sync")}
+          >
             Continue to Sync
             <span className="material-symbols-outlined">arrow_forward</span>
           </button>

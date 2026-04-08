@@ -10,8 +10,8 @@ export default function JobsTable({ jobs, loading }: JobsTableProps) {
     <section className="table-shell">
       <div className="flex items-center justify-between border-b border-[rgba(15,17,21,0.1)] px-5 py-4">
         <div>
-          <p className="section-title">Internship Feed</p>
-          <p className="mt-1 text-sm text-[var(--ink-500)]">
+          <p className="section-title ml-4">Internship Feed</p>
+          <p className="mt-1 ml-4 text-sm text-[var(--ink-500)]">
             {loading ? "Scanning live boards..." : `${jobs.length} listings found`}
           </p>
         </div>

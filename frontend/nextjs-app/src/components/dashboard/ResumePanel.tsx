@@ -76,19 +76,12 @@ export default function ResumePanel({
 
       <div className="mx-auto max-w-2xl mt-12 overflow-hidden rounded-2xl border border-[rgba(15,17,21,0.08)] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
   {/* Modern Header - Styled as a "status bar" */}
-  <div className="bg-[rgba(244,242,238,0.5)] px-6 py-3 border-b border-[rgba(15,17,21,0.06)] flex justify-between items-center">
-    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--ink-400)]">Engine Configuration</p>
-    <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
-  </div>
 
   <div className="p-10">
     <div className="flex flex-col md:flex-row md:items-end gap-10">
       
       {/* Dropdown Section */}
       <div className="flex-1 group">
-        <label className="block text-xs font-bold text-[var(--ink-900)] uppercase tracking-tight mb-1 transition-colors group-focus-within:text-blue-600">
-          Analysis Depth
-        </label>
         <p className="text-sm text-[var(--ink-500)] mb-4 leading-relaxed">
           Define the maximum number of matches to rank against your profile.
         </p>
