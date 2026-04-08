@@ -14,7 +14,6 @@ export default function ResumePreviewCard({
       <div className="flex items-center justify-between">
         <p className="section-title">Resume Preview</p>
         <div className="flex items-center gap-2">
-          <span className="data-chip">{resumePreview.characters} chars</span>
           <button
             className="pill-button"
             type="button"

@@ -48,15 +48,13 @@ export default function ResumePanel({
             Scan Resume
           </button>
           <input
-          type="file"
-          accept=".pdf,.docx"
-          /* If 'hidden' isn't working, these classes force it to be 0px 
-            without removing it from the document */
-          className="absolute inset-0 opacity-0 w-0 h-0" 
-          ref={fileInputRef}
-          onChange={(event) =>
-            handleResumeSelect(event.target.files?.[0] ?? null)
-          }
+            type="file"
+            accept=".pdf,.docx"
+            className="sr-only"
+            ref={fileInputRef}
+            onChange={(event) =>
+              handleResumeSelect(event.target.files?.[0] ?? null)
+            }
           />
           {resumeFile && (
   <div className="mt-6 flex items-center justify-center gap-2">

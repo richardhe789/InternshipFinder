@@ -36,18 +36,10 @@ export default function FiltersPanel({
 
   return (
     <section className="editorial-panel text-center">
-      <div className="flex flex-col items-center gap-3">
-        <div>
-          <p className="section-title">Filter Stack</p>
-          <p className="mt-1 text-sm text-[var(--ink-500)]">
-            Tune the signal before you score.
-          </p>
-        </div>
-        <div className="data-chip">Smart filters engaged</div>
-      </div>
+      
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <div className="input-shell">
-          <label className="input-label">Job Title</label>
+          <label className="input-label mr-3">Job Title</label>
           <input
             className="input-field"
             placeholder="SWE, ML, AI"
@@ -56,7 +48,7 @@ export default function FiltersPanel({
           />
         </div>
         <div className="input-shell">
-          <label className="input-label">Location</label>
+          <label className="input-label mr-3">Location</label>
           <input
             className="input-field"
             placeholder="Remote, NYC, etc."
