@@ -80,11 +80,6 @@ export default function FiltersPanel({
             onChange={(event) => onMinScoreChange(Number(event.target.value))}
             className="range-field"
           />
-          <div className="flex justify-between text-[0.7rem] text-[var(--ink-300)]">
-            <span>0</span>
-            <span>50</span>
-            <span>100</span>
-          </div>
         </div>
       </div>
     </section>

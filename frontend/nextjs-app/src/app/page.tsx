@@ -25,7 +25,7 @@ export default function Home() {
   const [scrapeStatus, setScrapeStatus] = useState<string | null>(null);
   const [jobTitle, setJobTitle] = useState("");
   const [location, setLocation] = useState("");
-  const [minScore, setMinScore] = useState(70);
+  const [minScore, setMinScore] = useState(50);
   const [resultLimit, setResultLimit] = useState(15);
   const hasAutoScraped = useRef(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -33,6 +33,7 @@ export default function Home() {
   const [scoreExplanation, setScoreExplanation] = useState<string | null>(null);
   const [hasScored, setHasScored] = useState(false);
   const [resumePreview, setResumePreview] = useState<ResumePreview | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
   const [previewStatus, setPreviewStatus] = useState<string | null>(null);
 
   const queryParams = useMemo(() => {
@@ -85,7 +86,8 @@ export default function Home() {
       });
       const data: ResumePreview = await response.json();
       setResumePreview(data);
-      setPreviewStatus("Resume parsed. Review the preview below.");
+      setPreviewStatus("Resume parsed. Preview is ready when you open it.");
+      setShowPreview(false);
       await scoreJobs(activeFile);
     } catch (error) {
       console.error("Failed to parse resume", error);
@@ -266,11 +268,30 @@ export default function Home() {
               {previewStatus && <StatusMessage text={previewStatus} />}
 
               {resumePreview && (
+                <div className="card preview-toggle">
+                  <div>
+                    <p className="card-title">Resume Preview</p>
+                    <p className="hero-description">
+                      Open the snapshot to review the extracted content and skills.
+                    </p>
+                  </div>
+                  <button
+                    className="footer-secondary"
+                    type="button"
+                    onClick={() => setShowPreview((prev) => !prev)}
+                  >
+                    {showPreview ? "Hide Preview" : "Show Preview"}
+                  </button>
+                </div>
+              )}
+
+              {resumePreview && showPreview && (
                 <ResumePreviewCard
                   resumePreview={resumePreview}
                   onClose={() => {
                     setResumePreview(null);
                     setPreviewStatus(null);
+                    setShowPreview(false);
                   }}
                 />
               )}
