@@ -273,6 +273,11 @@ textarea {
   gap: 0.35rem;
 }
 
+.upload-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
 .status-text {
   font-size: 0.8rem;
   color: var(--ink-500);
