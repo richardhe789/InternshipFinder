@@ -1,9 +1,11 @@
+import { useRef } from "react";
+
 type ResumePanelProps = {
   resumeFile: File | null;
   resultLimit: number;
   onResumeChange: (file: File | null) => void;
   onResultLimitChange: (value: number) => void;
-  onPreview: () => void;
+  onPreview: (file?: File | null) => void;
   onScore: () => void;
 };
 
@@ -15,6 +17,23 @@ export default function ResumePanel({
   onPreview,
   onScore,
 }: ResumePanelProps) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleResumeSelect = async (file: File | null) => {
+    onResumeChange(file);
+    if (file) {
+      await onPreview(file);
+    }
+  };
+
+  const handleScanResume = () => {
+    if (resumeFile) {
+      onPreview(resumeFile);
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
   return (
     <section className="space-y-6">
       <div className="rounded-3xl border-2 border-dashed border-[rgba(27,77,255,0.3)] bg-white/70 p-8 shadow-[0_20px_60px_rgba(15,17,21,0.12)]">
@@ -35,7 +54,10 @@ export default function ResumePanel({
               type="file"
               accept=".pdf,.docx"
               className="hidden"
-              onChange={(event) => onResumeChange(event.target.files?.[0] ?? null)}
+              ref={fileInputRef}
+              onChange={(event) =>
+                handleResumeSelect(event.target.files?.[0] ?? null)
+              }
             />
           </label>
           {resumeFile && (
@@ -72,8 +94,11 @@ export default function ResumePanel({
             </select>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button className="cta-button secondary" onClick={() => onPreview()}>
-              Preview Resume
+            <button
+              className="cta-button secondary"
+              onClick={handleScanResume}
+            >
+              Scan Resume
             </button>
             <button className="cta-button primary" onClick={() => onScore()}>
               Score Jobs

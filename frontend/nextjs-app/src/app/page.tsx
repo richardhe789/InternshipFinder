@@ -180,7 +180,7 @@ export default function Home() {
         <Header onRunScrape={runScrape} />
 
         <main className="mx-auto max-w-6xl px-6 py-12">
-          <section className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <section className="mx-auto flex max-w-5xl flex-col gap-6 text-center lg:text-left lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <span className="eyebrow stagger-fade">Resume Intelligence</span>
               <h1 className="headline-display stagger-fade delay-1">
@@ -196,7 +196,7 @@ export default function Home() {
                 <span className="data-chip">Threshold {minScore}%+</span>
               </div>
             </div>
-            <div className="glass-card max-w-sm stagger-fade delay-3">
+            <div className="glass-card mx-auto max-w-sm stagger-fade delay-3 lg:mx-0">
               <p className="section-title">Live Status</p>
               <p className="mt-3 text-sm text-[var(--ink-500)]">
                 {scrapeStatus ?? "Awaiting scrape. Launch to refresh boards."}
@@ -215,7 +215,7 @@ export default function Home() {
             </div>
           </section>
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="mx-auto mt-10 grid max-w-5xl gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
             <div className="space-y-6">
               <FiltersPanel
                 jobTitle={jobTitle}
