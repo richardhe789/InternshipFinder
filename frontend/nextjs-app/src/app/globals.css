@@ -180,6 +180,11 @@ textarea {
   font-weight: 600;
   color: #667184;
   transition: background 0.2s ease, color 0.2s ease;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
 }
 
 .side-nav__link:hover {
@@ -310,6 +315,19 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+.match-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.match-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
 }
 
 .card {
