@@ -27,10 +27,10 @@ export default function ResumePanel({
   };
 
   const handleScanResume = () => {
-    if (resumeFile) {
-      onPreview(resumeFile);
-      return;
-    }
+    // if (resumeFile) {
+    //   onPreview(resumeFile);
+    //   return;
+    // }
     fileInputRef.current?.click();
   };
 
@@ -48,19 +48,32 @@ export default function ResumePanel({
             Scan Resume
           </button>
           <input
-            type="file"
-            accept=".pdf,.docx"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={(event) =>
-              handleResumeSelect(event.target.files?.[0] ?? null)
-            }
+          type="file"
+          accept=".pdf,.docx"
+          /* If 'hidden' isn't working, these classes force it to be 0px 
+            without removing it from the document */
+          className="absolute inset-0 opacity-0 w-0 h-0" 
+          ref={fileInputRef}
+          onChange={(event) =>
+            handleResumeSelect(event.target.files?.[0] ?? null)
+          }
           />
           {resumeFile && (
-            <p className="mt-3 text-xs text-[var(--ink-300)]">
-              Selected: {resumeFile.name}
-            </p>
-          )}
+  <div className="mt-6 flex items-center justify-center gap-2">
+    <div className="flex items-center gap-2 px-4 py-2 bg-[rgba(27,77,255,0.05)] border border-[rgba(27,77,255,0.1)] rounded-full text-xs font-medium text-[rgba(27,77,255,1)] animate-in fade-in zoom-in duration-300">
+      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      {resumeFile.name}
+      <button 
+        onClick={() => onResumeChange(null)} 
+        className="ml-1 hover:text-red-500 transition-colors"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
       </div>
 
       <div className="mx-auto max-w-2xl mt-12 overflow-hidden rounded-2xl border border-[rgba(15,17,21,0.08)] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
