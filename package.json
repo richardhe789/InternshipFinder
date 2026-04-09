@@ -1,7 +1,4 @@
 {
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.2.2",
-    "postcss": "^8.5.9",
-    "tailwindcss": "^4.2.2"
-  }
+  "name": "internship-finder",
+  "private": true
 }
