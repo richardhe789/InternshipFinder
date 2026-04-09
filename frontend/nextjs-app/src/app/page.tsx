@@ -45,6 +45,7 @@ export default function Home() {
   const [resumePreview, setResumePreview] = useState<ResumePreview | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [previewStatus, setPreviewStatus] = useState<string | null>(null);
+  const [previewProgress, setPreviewProgress] = useState<number | null>(null);
 
   const stepNumber = activeTab === "sync" ? 3 : activeTab === "matches" ? 2 : 1;
   const stepProgress = stepNumber / 3;
@@ -89,7 +90,14 @@ export default function Home() {
       return;
     }
 
-    setPreviewStatus("Parsing resume...");
+    setPreviewStatus(null);
+    setPreviewProgress(5);
+    const progressTimer = window.setInterval(() => {
+      setPreviewProgress((current) => {
+        if (current === null) return 5;
+        return Math.min(current + 7, 92);
+      });
+    }, 450);
     const formData = new FormData();
     formData.append("file", activeFile);
 
@@ -100,13 +108,20 @@ export default function Home() {
       });
       const data: ResumePreview = await response.json();
       setResumePreview(data);
-      setPreviewStatus("Resume parsed. Preview is ready when you open it.");
+      setPreviewProgress(100);
+      window.setTimeout(() => {
+        setPreviewProgress(null);
+        setPreviewStatus("Resume parsed. Preview is ready when you open it.");
+      }, 500);
       setShowPreview(false);
       await scoreJobs(activeFile);
     } catch (error) {
       console.error("Failed to parse resume", error);
       setPreviewStatus("Failed to parse resume. Check backend logs.");
+      setPreviewProgress(null);
     }
+
+    window.clearInterval(progressTimer);
   };
 
   const scoreJobs = async (fileOverride?: File | null) => {
@@ -324,7 +339,22 @@ export default function Home() {
                 onScore={scoreJobs}
               />
 
-              {previewStatus && <StatusMessage text={previewStatus} />}
+              {previewProgress !== null ? (
+                <div className="rounded-[16px] bg-surface-container-lowest p-4 shadow-card">
+                  <div className="mb-2 flex items-center justify-between text-[0.85rem] font-semibold text-on-surface-variant">
+                    <span>Parsing resume</span>
+                    <span>{previewProgress}%</span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-surface-container">
+                    <div
+                      className="h-full bg-gradient-to-r from-tertiary-fixed-dim to-on-tertiary-container transition-[width] duration-300"
+                      style={{ width: `${previewProgress}%` }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                previewStatus && <StatusMessage text={previewStatus} />
+              )}
 
               {resumePreview && (
                 <div className={`${cardBase} flex items-center justify-between gap-6`}>
