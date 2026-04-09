@@ -23,9 +23,9 @@ const sideNavLinkActive =
   "bg-white text-[#20306e] shadow-[0_10px_20px_rgba(32,48,110,0.06)]";
 const cardBase = "rounded-[20px] bg-surface-container-lowest p-8 shadow-card";
 const footerPrimary =
-  "inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-primary to-primary-container px-10 py-4 text-base font-bold text-on-primary shadow-[0_18px_35px_rgba(0,6,102,0.25)]";
+  "inline-flex items-center gap-3 rounded-full bg-primary px-10 py-4 text-base font-bold text-white shadow-[0_18px_35px_rgba(0,6,102,0.25)] transition hover:bg-primary-container";
 const footerSecondary =
-  "inline-flex items-center gap-2 text-[#6a7287] font-bold";
+  "inline-flex items-center gap-2 text-on-surface-variant font-bold transition hover:text-on-surface";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabKey>("build");
@@ -46,9 +46,15 @@ export default function Home() {
   const [showPreview, setShowPreview] = useState(false);
   const [previewStatus, setPreviewStatus] = useState<string | null>(null);
 
-  const stepNumber =
-    activeTab === "sync" ? 3 : activeTab === "matches" ? 2 : 1;
-  const stepProgress = `${Math.round((stepNumber / 3) * 100)}%`;
+  const stepNumber = useMemo(() => {
+    if (activeTab === "sync") return 3;
+    if (activeTab === "matches") return 2;
+    return 1;
+  }, [activeTab]);
+  const stepProgress = useMemo(
+    () => `${Math.round((stepNumber / 3) * 100)}%`,
+    [stepNumber]
+  );
 
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
