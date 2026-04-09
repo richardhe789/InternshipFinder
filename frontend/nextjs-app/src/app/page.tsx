@@ -13,7 +13,7 @@ type ScoreResponse = {
   explanation: string;
 };
 
-type TabKey = "build" | "matches" | "sync";
+type TabKey = "build" | "matches" | "sync" | "help";
 
 const API_BASE_URL = "";
 
@@ -48,6 +48,7 @@ export default function Home() {
 
   const stepNumber = activeTab === "sync" ? 3 : activeTab === "matches" ? 2 : 1;
   const stepProgress = stepNumber / 3;
+  const showProgress = activeTab !== "help";
 
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
@@ -293,15 +294,17 @@ export default function Home() {
               foundational structure for our AI matching engine.
             </p>
           </div>
-          <div className="flex flex-col items-start gap-2 text-[0.85rem] font-semibold text-on-surface-variant md:items-end">
-            <span>Step {stepNumber} of 3</span>
-            <div className="h-2 w-[200px] overflow-hidden rounded-full bg-surface-container">
-              <div
-                className="h-full w-full origin-left bg-gradient-to-r from-tertiary-fixed-dim to-on-tertiary-container shadow-[0_0_12px_rgba(0,170,161,0.3)] transition-transform duration-300"
-                style={{ transform: `scaleX(${stepProgress})` }}
-              />
+          {showProgress && (
+            <div className="flex flex-col items-start gap-2 text-[0.85rem] font-semibold text-on-surface-variant md:items-end">
+              <span>Step {stepNumber} of 3</span>
+              <div className="h-2 w-[200px] overflow-hidden rounded-full bg-surface-container">
+                <div
+                  className="h-full w-full origin-left bg-gradient-to-r from-tertiary-fixed-dim to-on-tertiary-container shadow-[0_0_12px_rgba(0,170,161,0.3)] transition-transform duration-300"
+                  style={{ transform: `scaleX(${stepProgress})` }}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </header>
 
         {activeTab === "build" ? (
@@ -472,6 +475,82 @@ export default function Home() {
             {scrapeStatus && <StatusMessage text={scrapeStatus} />}
 
             <JobsTable jobs={jobs} loading={loading} />
+          </section>
+        ) : activeTab === "help" ? (
+          <section className="flex flex-col gap-8">
+            <div className={`${cardBase} flex flex-col gap-4`}>
+              <h3 className="flex items-center gap-2 text-[1.2rem] font-bold">
+                <span className="material-symbols-outlined text-tertiary">help</span>
+                How the Career Architect Works
+              </h3>
+              <p className="text-[1.05rem] text-on-surface-variant">
+                This workspace helps you turn a resume into focused internship matches and a
+                repeatable outreach plan. Upload your resume, tune your filters, and keep your
+                results synced in one place.
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              {[
+                {
+                  step: "1",
+                  title: "Build",
+                  description:
+                    "Upload a resume, review the AI preview, and define the signals you want to emphasize.",
+                  icon: "edit_note",
+                },
+                {
+                  step: "2",
+                  title: "Matches",
+                  description:
+                    "Scrape listings, score them against your resume, and refine the shortlist with filters.",
+                  icon: "auto_awesome",
+                },
+                {
+                  step: "3",
+                  title: "Sync",
+                  description:
+                    "Use the checkpoint to export, track outreach, and keep everything aligned.",
+                  icon: "sync_alt",
+                },
+              ].map((item) => (
+                <div
+                  key={item.step}
+                  className="rounded-[20px] bg-surface-container-lowest p-6 shadow-card"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="text-[0.8rem] font-bold uppercase tracking-[0.16em] text-[#9aa2b2]">
+                      Step {item.step}
+                    </div>
+                    <span className="material-symbols-outlined text-tertiary">
+                      {item.icon}
+                    </span>
+                  </div>
+                  <h4 className="mt-4 text-[1.1rem] font-bold text-on-surface">
+                    {item.title}
+                  </h4>
+                  <p className="mt-2 text-[0.95rem] text-on-surface-variant">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-[20px] bg-primary p-8 text-on-primary shadow-card">
+              <h3 className="mb-4 text-[1.2rem] font-bold">Quick Walkthrough</h3>
+              <div className="grid gap-4 md:grid-cols-4">
+                {["Upload Resume", "Tune Filters", "Score Listings", "Export & Sync"].map(
+                  (label, index) => (
+                    <div key={label} className="flex items-center gap-3">
+                      <div className="grid h-10 w-10 place-items-center rounded-full bg-white/15 text-[0.95rem] font-bold">
+                        {index + 1}
+                      </div>
+                      <div className="text-[0.95rem] font-semibold">{label}</div>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
           </section>
         ) : (
           <section className="flex flex-col gap-8">
