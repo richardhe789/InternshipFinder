@@ -265,7 +265,12 @@ export default function Home() {
           </button>
           <button
             type="button"
-            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-[0.85rem] font-semibold text-[#667184] transition-colors hover:bg-[#e7ecf3]"
+            className={`flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-[0.85rem] font-semibold transition-colors ${
+              activeTab === "help"
+                ? "bg-[#e7ecf3] text-[#20306e]"
+                : "text-[#667184] hover:bg-[#e7ecf3]"
+            }`}
+            onClick={() => setActiveTab("help")}
           >
             <span className="material-symbols-outlined">help</span>
             Help
