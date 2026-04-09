@@ -35,22 +35,25 @@ export default function FiltersPanel({
   const locationDatalistId = "location-suggestions";
 
   return (
-    <section className="editorial-panel text-center">
-      
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <div className="input-shell">
-          <label className="input-label mr-3">Job Title</label>
+    <section className="rounded-[20px] bg-surface-container-lowest p-6 shadow-card">
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Job Title
+          </label>
           <input
-            className="input-field"
+            className="w-full rounded-2xl border border-outline-variant bg-white/90 px-4 py-3 text-[0.9rem] transition focus:border-legacy-accent focus:outline-none focus:ring-2 focus:ring-[rgba(27,77,255,0.15)]"
             placeholder="SWE, ML, AI"
             value={jobTitle}
             onChange={(event) => onJobTitleChange(event.target.value)}
           />
         </div>
-        <div className="input-shell">
-          <label className="input-label mr-3">Location</label>
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Location
+          </label>
           <input
-            className="input-field"
+            className="w-full rounded-2xl border border-outline-variant bg-white/90 px-4 py-3 text-[0.9rem] transition focus:border-legacy-accent focus:outline-none focus:ring-2 focus:ring-[rgba(27,77,255,0.15)]"
             placeholder="Remote, NYC, etc."
             list={locationDatalistId}
             value={location}
@@ -62,15 +65,17 @@ export default function FiltersPanel({
             ))}
           </datalist>
         </div>
-        <div className="input-shell">
-          <label className="input-label">Minimum Match Score: {minScore}</label>
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Minimum Match Score: {minScore}
+          </label>
           <input
             type="range"
             min={0}
             max={100}
             value={minScore}
             onChange={(event) => onMinScoreChange(Number(event.target.value))}
-            className="range-field"
+            className="w-full accent-legacy-accent"
           />
         </div>
       </div>

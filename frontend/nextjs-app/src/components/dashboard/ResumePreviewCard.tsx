@@ -10,12 +10,14 @@ export default function ResumePreviewCard({
   onClose,
 }: ResumePreviewCardProps) {
   return (
-    <div className="editorial-panel text-sm text-[var(--ink-700)]">
+    <div className="rounded-[20px] bg-surface-container-lowest p-6 text-sm text-on-surface-variant shadow-card">
       <div className="flex items-center justify-between">
-        <p className="section-title">Resume Preview</p>
+        <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+          Resume Preview
+        </p>
         <div className="flex items-center gap-2">
           <button
-            className="pill-button"
+            className="inline-flex items-center gap-1.5 rounded-full bg-legacy-ink-900 px-4 py-2 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-white"
             type="button"
             onClick={onClose}
           >
@@ -25,7 +27,9 @@ export default function ResumePreviewCard({
       </div>
       {(resumePreview.name || resumePreview.email || resumePreview.phone) && (
         <div className="mt-4">
-          <p className="section-title">Contact</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Contact
+          </p>
           <p className="mt-1 text-sm">
             {resumePreview.name && <span>{resumePreview.name}</span>}
             {resumePreview.email && <span className="ml-2">{resumePreview.email}</span>}
@@ -35,7 +39,9 @@ export default function ResumePreviewCard({
       )}
       {(resumePreview.linkedin || resumePreview.github) && (
         <div className="mt-4">
-          <p className="section-title">Profiles</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Profiles
+          </p>
           <p className="mt-1 text-sm">
             {resumePreview.linkedin && (
               <span className="mr-2">{resumePreview.linkedin}</span>
@@ -49,31 +55,41 @@ export default function ResumePreviewCard({
       </p>
       {resumePreview.keywords?.length > 0 && (
         <div className="mt-4">
-          <p className="section-title">Keywords</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Keywords
+          </p>
           <p className="mt-1 text-sm">{resumePreview.keywords.join(", ")}</p>
         </div>
       )}
       {resumePreview.experience_titles?.length > 0 && (
         <div className="mt-4">
-          <p className="section-title">Experience Titles</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Experience Titles
+          </p>
           <p className="mt-1 text-sm">{resumePreview.experience_titles.join(", ")}</p>
         </div>
       )}
       {resumePreview.companies?.length > 0 && (
         <div className="mt-4">
-          <p className="section-title">Companies</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Companies
+          </p>
           <p className="mt-1 text-sm">{resumePreview.companies.join(", ")}</p>
         </div>
       )}
       {resumePreview.date_ranges?.length > 0 && (
         <div className="mt-4">
-          <p className="section-title">Date Ranges</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Date Ranges
+          </p>
           <p className="mt-1 text-sm">{resumePreview.date_ranges.join(", ")}</p>
         </div>
       )}
       {resumePreview.skills_section && (
         <div className="mt-4">
-          <p className="section-title">Skills Section</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Skills Section
+          </p>
           <p className="mt-1 whitespace-pre-wrap text-sm">
             {resumePreview.skills_section}
           </p>
@@ -81,7 +97,9 @@ export default function ResumePreviewCard({
       )}
       {resumePreview.experience_section && (
         <div className="mt-4">
-          <p className="section-title">Experience Section</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Experience Section
+          </p>
           <p className="mt-1 whitespace-pre-wrap text-sm">
             {resumePreview.experience_section}
           </p>
@@ -89,7 +107,9 @@ export default function ResumePreviewCard({
       )}
       {resumePreview.projects_section && (
         <div className="mt-4">
-          <p className="section-title">Projects Section</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Projects Section
+          </p>
           <p className="mt-1 whitespace-pre-wrap text-sm">
             {resumePreview.projects_section}
           </p>
@@ -97,13 +117,17 @@ export default function ResumePreviewCard({
       )}
       {resumePreview.courses?.length > 0 && (
         <div className="mt-4">
-          <p className="section-title">Relevant Courses</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Relevant Courses
+          </p>
           <p className="mt-1 text-sm">{resumePreview.courses.join(", ")}</p>
         </div>
       )}
       {resumePreview.education && (
         <div className="mt-4">
-          <p className="section-title">Education Section</p>
+          <p className="text-[0.75rem] font-bold uppercase tracking-[0.12em] text-legacy-ink-500">
+            Education Section
+          </p>
           <p className="mt-1 whitespace-pre-wrap text-sm">{resumePreview.education}</p>
         </div>
       )}
