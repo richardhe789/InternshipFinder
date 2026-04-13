@@ -1,4 +1,4 @@
-# Internship Finder (Simplify-only)
+# The Career Architect (Simplify-only)
 
 This project is a full-stack internship dashboard focused entirely on **SimplifyJobs data**.
 
