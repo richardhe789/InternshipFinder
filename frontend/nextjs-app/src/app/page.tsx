@@ -13,7 +13,7 @@ type ScoreResponse = {
   explanation: string;
 };
 
-type TabKey = "build" | "matches" | "sync" | "help";
+type TabKey = "build" | "matches" | "help";
 
 const API_BASE_URL = "";
 
@@ -47,8 +47,8 @@ export default function Home() {
   const [previewStatus, setPreviewStatus] = useState<string | null>(null);
   const [previewProgress, setPreviewProgress] = useState<number | null>(null);
 
-  const stepNumber = activeTab === "sync" ? 3 : activeTab === "matches" ? 2 : 1;
-  const stepProgress = stepNumber / 3;
+  const stepNumber = activeTab === "matches" ? 2 : 1;
+  const stepProgress = stepNumber / 2;
   const showProgress = activeTab !== "help";
 
   const queryParams = useMemo(() => {
@@ -222,9 +222,6 @@ export default function Home() {
           <span className="font-medium text-[#657086] transition-colors hover:text-[#2a3ed1]">
             Resources
           </span>
-          <button className="rounded-full bg-gradient-to-r from-primary to-primary-container px-6 py-2 text-[0.85rem] font-bold text-on-primary transition-transform hover:-translate-y-0.5">
-            Apply Now
-          </button>
         </div>
       </nav>
 
@@ -256,28 +253,8 @@ export default function Home() {
             <span className="material-symbols-outlined">auto_awesome</span>
             Matches
           </button>
-          <button
-            type="button"
-            className={`${sideNavLinkBase} ${
-              activeTab === "sync" ? sideNavLinkActive : "hover:bg-[#e7ecf3] hover:text-[#20306e]"
-            }`}
-            onClick={() => setActiveTab("sync")}
-          >
-            <span className="material-symbols-outlined">sync_alt</span>
-            Sync
-          </button>
-          <button
-            type="button"
-            className={`${sideNavLinkBase} hover:bg-[#e7ecf3] hover:text-[#20306e]`}
-          >
-            <span className="material-symbols-outlined">person</span>
-            Profile
-          </button>
         </div>
         <div className="flex flex-col gap-1 border-t border-transparent pt-4 max-[1200px]:flex-row max-[1200px]:flex-wrap">
-          <button className="rounded-[14px] bg-secondary-container px-4 py-3 text-[0.85rem] font-bold text-on-secondary-container">
-            Upgrade to Pro
-          </button>
           <button
             type="button"
             className={`flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-[0.85rem] font-semibold transition-colors ${
@@ -289,13 +266,6 @@ export default function Home() {
           >
             <span className="material-symbols-outlined">help</span>
             Help
-          </button>
-          <button
-            type="button"
-            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-[0.85rem] font-semibold text-[#667184] transition-colors hover:bg-[#e7ecf3]"
-          >
-            <span className="material-symbols-outlined">logout</span>
-            Logout
           </button>
         </div>
       </aside>
@@ -316,7 +286,7 @@ export default function Home() {
           </div>
           {showProgress && (
             <div className="flex flex-col items-start gap-2 text-[0.85rem] font-semibold text-on-surface-variant md:items-end">
-              <span>Step {stepNumber} of 3</span>
+              <span>Step {stepNumber} of 2</span>
               <div className="h-2 w-[200px] overflow-hidden rounded-full bg-surface-container">
                 <div
                   className="h-full w-full origin-left bg-gradient-to-r from-tertiary-fixed-dim to-on-tertiary-container shadow-[0_0_12px_rgba(0,170,161,0.3)] transition-transform duration-300"
@@ -519,9 +489,9 @@ export default function Home() {
                 How the Career Architect Works
               </h3>
               <p className="text-[1.05rem] text-on-surface-variant">
-                This workspace helps you turn a resume into focused internship matches and a
-                repeatable outreach plan. Upload your resume, tune your filters, and keep your
-                results synced in one place.
+                This workspace helps you turn a resume into focused internship matches.
+                Upload your resume, tune your filters, and review the best Simplify listings
+                in one place.
               </p>
             </div>
 
@@ -540,13 +510,6 @@ export default function Home() {
                   description:
                     "Scrape listings, score them against your resume, and refine the shortlist with filters.",
                   icon: "auto_awesome",
-                },
-                {
-                  step: "3",
-                  title: "Sync",
-                  description:
-                    "Use the checkpoint to export, track outreach, and keep everything aligned.",
-                  icon: "sync_alt",
                 },
               ].map((item) => (
                 <div
@@ -573,8 +536,8 @@ export default function Home() {
 
             <div className="rounded-[20px] bg-primary p-8 text-on-primary shadow-card">
               <h3 className="mb-4 text-[1.2rem] font-bold">Quick Walkthrough</h3>
-              <div className="grid gap-4 md:grid-cols-4">
-                {["Upload Resume", "Tune Filters", "Score Listings", "Export & Sync"].map(
+              <div className="grid gap-4 md:grid-cols-3">
+                {["Upload Resume", "Tune Filters", "Score Listings"].map(
                   (label, index) => (
                     <div key={label} className="flex items-center gap-3">
                       <div className="grid h-10 w-10 place-items-center rounded-full bg-white/15 text-[0.95rem] font-bold">
@@ -587,71 +550,32 @@ export default function Home() {
               </div>
             </div>
           </section>
-        ) : (
-          <section className="flex flex-col gap-8">
-            <div className={`${cardBase} flex flex-col gap-4`}>
-              <h3 className="flex items-center gap-2 text-[1.05rem] font-bold">
-                <span className="material-symbols-outlined text-tertiary">sync_alt</span>
-                Sync Progress
-              </h3>
-              <p className="text-[1.05rem] text-on-surface-variant">
-                Connect your workflow to keep internships, resume updates, and
-                outreach status in one place.
-              </p>
-              <div className="flex flex-wrap items-center gap-4">
-                <button
-                  className={footerPrimary}
-                  type="button"
-                  onClick={() => setActiveTab("matches")}
-                >
-                  Back to Matches
-                </button>
-                <button
-                  className={footerSecondary}
-                  type="button"
-                  onClick={() => setActiveTab("build")}
-                >
-                  Edit Resume Signals
-                </button>
-              </div>
-            </div>
-            <div className="rounded-[20px] bg-surface-container-low p-8 shadow-card">
-              <h3 className="mb-6 flex items-center gap-2 text-[1.05rem] font-bold">
-                <span className="material-symbols-outlined text-tertiary">check_circle</span>
-                Next Steps
-              </h3>
-              <p className="text-[1.05rem] text-on-surface-variant">
-                We&apos;ll add calendar, CRM, and notification sync in this step. For
-                now, use it as a checkpoint before export.
-              </p>
-            </div>
-          </section>
-        )}
+        ) : null}
 
         <footer className="mt-12 flex items-center justify-between border-t border-surface-container pt-8">
-          <button className={footerSecondary} type="button">
-            <span className="material-symbols-outlined">arrow_back</span>
-            Previous Step
-          </button>
-          <button
-            className={footerPrimary}
-            type="button"
-            onClick={() => setActiveTab("sync")}
-          >
-            Continue to Sync
-            <span className="material-symbols-outlined">arrow_forward</span>
-          </button>
+          {activeTab === "matches" ? (
+            <button className={footerSecondary} type="button" onClick={() => setActiveTab("build")}>
+              <span className="material-symbols-outlined">arrow_back</span>
+              Back to Resume
+            </button>
+          ) : (
+            <div />
+          )}
+          {activeTab === "build" ? (
+            <button
+              className={footerPrimary}
+              type="button"
+              onClick={() => setActiveTab("matches")}
+            >
+              View Matches
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </button>
+          ) : (
+            <div />
+          )}
         </footer>
       </main>
 
-      <div className="hidden max-[768px]:block">
-        <button
-          className="fixed bottom-8 right-8 grid h-14 w-14 place-items-center rounded-full bg-primary text-on-primary shadow-[0_12px_24px_rgba(0,6,102,0.25)]"
-          type="button"
-        >
-          <span className="material-symbols-outlined">add</span>
-        </button>
-      </div>
     </div>
   );
 }
