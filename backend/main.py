@@ -5,7 +5,7 @@ from typing import Any, Iterable, Mapping, Optional
 
 import fitz  # type: ignore[import-not-found]
 from docx import Document  # type: ignore[import-not-found]
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore[import-not-found,import-untyped]
 from sklearn.metrics.pairwise import cosine_similarity  # type: ignore[import-not-found,import-untyped]
@@ -222,8 +222,14 @@ def _extract_courses(text: str) -> list[str]:
     return courses[:20]
 
 
-def _score_jobs(resume_text: str, jobs: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
-    normalized_resume = _normalize_text(resume_text)
+def _score_jobs(
+    resume_text: str,
+    jobs: Iterable[Mapping[str, Any]],
+    selected_skills: Optional[Iterable[str]] = None,
+) -> list[dict[str, Any]]:
+    skill_terms = [skill.strip() for skill in (selected_skills or []) if skill and skill.strip()]
+    weighted_skill_context = " ".join(skill_terms * 3)
+    normalized_resume = _normalize_text(" ".join([resume_text, weighted_skill_context]))
     if not normalized_resume:
         return [{**job, "match_score": 0.0} for job in jobs]
 
@@ -326,20 +332,18 @@ async def score_jobs(
     location: Optional[str] = None,
     min_match_score: Optional[float] = None,
     limit: int = 15,
+    selected_skills: Optional[list[str]] = Form(default=None),
 ):
     file_bytes = await file.read()
     resume_text = _extract_resume_text(file.filename or "", file_bytes)
     jobs = _list_jobs(job_title=job_title, location=location, min_match_score=None)
-    scored_jobs = _score_jobs(resume_text, jobs)
+    scored_jobs = _score_jobs(resume_text, jobs, selected_skills=selected_skills)
 
     safe_limit = max(1, min(limit, len(scored_jobs)))
     top_jobs = scored_jobs[:safe_limit]
     return {
         "jobs": top_jobs,
-        "explanation": (
-            "Scores are computed as TF-IDF cosine similarity between the resume text and each job's "
-            "role/company/location text. Returned list is the top scoring roles."
-        ),
+        "explanation": "",
     }
 
 
