@@ -15,6 +15,33 @@ type ScoreResponse = {
 
 type TabKey = "build" | "matches" | "help";
 
+const AVAILABLE_SKILLS = [
+  "React",
+  "TypeScript",
+  "JavaScript",
+  "Python",
+  "Java",
+  "C++",
+  "SQL",
+  "PostgreSQL",
+  "Node.js",
+  "Next.js",
+  "FastAPI",
+  "AWS",
+  "Docker",
+  "Kubernetes",
+  "Machine Learning",
+  "Data Analysis",
+  "UI/UX Design",
+  "Figma",
+  "Product Management",
+  "Testing",
+  "Git",
+  "REST APIs",
+  "Tailwind CSS",
+  "System Design",
+] as const;
+
 const API_BASE_URL = "";
 
 const sideNavLinkBase =
@@ -46,6 +73,12 @@ export default function Home() {
   const [showPreview, setShowPreview] = useState(false);
   const [previewStatus, setPreviewStatus] = useState<string | null>(null);
   const [previewProgress, setPreviewProgress] = useState<number | null>(null);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([
+    "UI/UX Design",
+    "React",
+    "Figma",
+  ]);
+  const [skillSearch, setSkillSearch] = useState("");
 
   const stepNumber = activeTab === "matches" ? 2 : 1;
   const stepProgress = stepNumber / 2;
@@ -57,6 +90,25 @@ export default function Home() {
     if (location) params.append("location", location);
     return params.toString();
   }, [jobTitle, location]);
+
+  const filteredSkills = useMemo(() => {
+    const query = skillSearch.trim().toLowerCase();
+    return AVAILABLE_SKILLS.filter((skill) => {
+      const matchesQuery = !query || skill.toLowerCase().includes(query);
+      return matchesQuery && !selectedSkills.includes(skill);
+    });
+  }, [skillSearch, selectedSkills]);
+
+  const addSkill = (skill: string) => {
+    setSelectedSkills((current) =>
+      current.includes(skill) ? current : [...current, skill]
+    );
+    setSkillSearch("");
+  };
+
+  const removeSkill = (skill: string) => {
+    setSelectedSkills((current) => current.filter((item) => item !== skill));
+  };
 
   const loadJobs = async () => {
     setLoading(true);
@@ -136,6 +188,7 @@ export default function Home() {
 
     const formData = new FormData();
     formData.append("file", activeFile);
+    selectedSkills.forEach((skill) => formData.append("selected_skills", skill));
 
     try {
       const response = await fetch(
@@ -367,18 +420,17 @@ export default function Home() {
                   opportunities for you.
                 </p>
                 <div className="mb-6 flex flex-wrap gap-2">
-                  <div className="inline-flex items-center gap-1.5 rounded-xl bg-secondary-container px-3 py-1.5 text-[0.8rem] font-semibold text-on-secondary-container">
-                    UI/UX Design <span className="material-symbols-outlined">close</span>
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 rounded-xl bg-secondary-container px-3 py-1.5 text-[0.8rem] font-semibold text-on-secondary-container">
-                    React <span className="material-symbols-outlined">close</span>
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 rounded-xl bg-secondary-container px-3 py-1.5 text-[0.8rem] font-semibold text-on-secondary-container">
-                    Figma <span className="material-symbols-outlined">close</span>
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 rounded-xl bg-secondary-container px-3 py-1.5 text-[0.8rem] font-semibold text-on-secondary-container">
-                    Strategy <span className="material-symbols-outlined">close</span>
-                  </div>
+                  {selectedSkills.map((skill) => (
+                    <button
+                      key={skill}
+                      type="button"
+                      onClick={() => removeSkill(skill)}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-secondary-container px-3 py-1.5 text-[0.8rem] font-semibold text-on-secondary-container"
+                    >
+                      {skill}
+                      <span className="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  ))}
                 </div>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8b93a8]">
@@ -386,24 +438,33 @@ export default function Home() {
                   </span>
                   <input
                     type="text"
-                    placeholder="Add a skill..."
+                    placeholder="Search skills to add..."
                     className="w-full rounded-2xl border-none bg-surface-container-high py-3 pl-10 pr-4 text-[0.85rem] focus:outline-none"
+                    value={skillSearch}
+                    onChange={(event) => setSkillSearch(event.target.value)}
                   />
                 </div>
                 <div className="mt-6 border-t border-surface-container pt-6">
                   <div className="mb-3 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-[#9aa2b2]">
-                    Suggested for you
+                    Available skills
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <button className="rounded-xl border border-outline-variant px-3 py-1.5 text-[0.75rem] font-semibold text-on-surface-variant">
-                      + TypeScript
-                    </button>
-                    <button className="rounded-xl border border-outline-variant px-3 py-1.5 text-[0.75rem] font-semibold text-on-surface-variant">
-                      + Python
-                    </button>
-                    <button className="rounded-xl border border-outline-variant px-3 py-1.5 text-[0.75rem] font-semibold text-on-surface-variant">
-                      + Product Management
-                    </button>
+                    {filteredSkills.length > 0 ? (
+                      filteredSkills.map((skill) => (
+                        <button
+                          key={skill}
+                          type="button"
+                          onClick={() => addSkill(skill)}
+                          className="rounded-xl border border-outline-variant px-3 py-1.5 text-[0.75rem] font-semibold text-on-surface-variant"
+                        >
+                          + {skill}
+                        </button>
+                      ))
+                    ) : (
+                      <p className="text-[0.8rem] text-on-surface-variant">
+                        No more matching skills to add.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
