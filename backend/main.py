@@ -343,11 +343,7 @@ async def score_jobs(
     top_jobs = scored_jobs[:safe_limit]
     return {
         "jobs": top_jobs,
-        "explanation": (
-            "Scores are computed as TF-IDF cosine similarity between the resume text and each job's "
-            "role/company/location text. Selected skill tags are added as extra matching context. "
-            "Returned list is the top scoring roles."
-        ),
+        "explanation": "",
     }
 
 

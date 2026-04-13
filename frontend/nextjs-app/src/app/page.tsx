@@ -268,14 +268,7 @@ export default function Home() {
         <div className="font-display text-[1.1rem] font-extrabold italic tracking-[-0.02em] text-[#1b2a6b]">
           The Career Architect
         </div>
-        <div className="hidden items-center gap-8 text-[0.95rem] max-[768px]:hidden md:flex">
-          <span className="font-medium text-[#657086] transition-colors hover:text-[#2a3ed1]">
-            Explore
-          </span>
-          <span className="font-medium text-[#657086] transition-colors hover:text-[#2a3ed1]">
-            Resources
-          </span>
-        </div>
+        <div />
       </nav>
 
       <aside className="fixed left-0 top-16 flex h-[calc(100vh-64px)] w-64 flex-col gap-4 bg-[#f4f6f9] px-4 py-6 max-[1200px]:static max-[1200px]:h-auto max-[1200px]:w-full max-[1200px]:flex-row max-[1200px]:items-center max-[1200px]:justify-between max-[1200px]:px-6 max-[1200px]:py-4 max-[768px]:hidden">
